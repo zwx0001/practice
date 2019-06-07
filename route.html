@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- <ul>
+        <li><a href="#/">首页</a></li>
+        <li><a href="#/product">产品</a></li>
+        <li><a href="#/server">服务</a></li>
+      </ul> -->
+      <ul>
+        <li><a href="/">首页</a></li>
+        <li><a href="/product">产品</a></li>
+        <li><a href="/server">服务</a></li>
+      </ul>
+      <div id="result"></div>
+    </div>
+    <script>
+      //hash路由实现
+
+      function Router(config) {
+        let { mode, routes } = config;
+        let result = document.getElementById("result");
+        if (mode === "hash") {
+          //hash路由
+          window.onhashchange = () => {
+            let path = location.hash.slice(1);
+            routes.forEach(item => {
+              if (item.path === path) {
+                result.innerHTML = item.component.template;
+              }
+            });
+          };
+        } else {
+          //history路由
+          let link = Array.from(document.querySelectorAll("a"));
+          let base = location.origin + location.pathname;
+          link.forEach(item => {
+            item.onclick = function(e) {
+              e.preventDefault();
+              let path = item.getAttribute("href");
+              routes.forEach(item => {
+                if (item.path === path) {
+                  history.pushState({}, "", base + path);
+                  //console.log(base + path);
+                  result.innerHTML = item.component.template;
+                }
+              });
+            };
+          });
+
+          window.onpopstate = () => {
+            let path = /\.html(.*)/.exec(location.pathname)[1];
+            routes.forEach(item => {
+              if (item.path === path) {
+                result.innerHTML = item.component.template;
+              }
+            });
+          };
+        }
+      }
+      new Router({
+        //mode: "hash",
+        mode: "history",
+        routes: [
+          {
+            path: "/",
+            component: {
+              template: "<h1>首页</h1>"
+            }
+          },
+          {
+            path: "/product",
+            component: {
+              template: "<h1>产品</h1>"
+            }
+          },
+          {
+            path: "/server",
+            component: {
+              template: "<h1>服务</h1>"
+            }
+          }
+        ]
+      });
+    </script>
+  </body>
+</html>

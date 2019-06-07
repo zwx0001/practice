@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function* fn() {
+        console.log("开始");
+        yield 1111;
+        console.log("1111");
+        yield 2222;
+        console.log("222");
+        yield 3333;
+        console.log("333");
+        yield 444;
+        console.log("444");
+        return "结束";
+      }
+      
+      let result = fn();
+      for (let i of result) {
+        console.log(i);
+      }
+
+      function* step() {
+        let start = 0;
+        while (true) {
+          start++;
+          yield start;
+        }
+      }
+
+      let sg = step();
+      for (let i of sg) {
+        console.log(i);
+        if (i >= 100) {
+          break;
+        }
+      }
+
+      //   console.log(result);
+      //   let r1 = result.next();
+      //   let r2 = result.next();
+      //   let r3 = result.next();
+      //   let r4 = result.next();
+      //   let r5 = result.next();
+      //   let r6 = result.next();
+      //   console.log(r1);
+      //   console.log(r2);
+      //   console.log(r3);
+      //   console.log(r4);
+      //   console.log(r5);
+      //   console.log(r6);
+      //实现斐波那契数列 300以内的数字
+
+      // 1，1，2，3，5，8，13，21……
+
+      //   function getdata(count) {
+      //     let arr = [];
+      //     let i = 1;
+      //     arr.push(i);
+      //     arr.push(i);
+      //     function changearr() {
+      //       let sum = arr[arr.length - 1] + arr[arr.length - 2];
+      //       if (sum < count) {
+      //         arr.push(sum);
+      //         changearr();
+      //       } else {
+      //         return;
+      //       }
+      //     }
+      //     changearr();
+      //     return arr;
+      //   }
+      //   console.log(getdata(300));
+    </script>
+  </body>
+</html>

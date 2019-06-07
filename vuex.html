@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/vuex/3.1.0/vuex.js"></script>
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <p>{{ msg }}</p>
+      <p>{{ message }}{{ age }}</p>
+      <p>{{ change }}</p>
+      <p>{{ $store.state.a.a_msg }}</p>
+      <p>{{ $store.state.b.a_msg }}</p>
+      <button @click="changemsg('修改')">点击</button>
+      <button @click="changmsgSync('修改2')">点击</button>
+      <button @click="changestate('改变a')">改变a模块state的值</button>
+      <button @click="changestatesync('改变a_sync')">
+        异步改变a模块state的值
+      </button>
+      <button @click="changestate('改变b')">改变b模块state的值</button>
+    </div>
+    <script>
+      let store = new Vuex.Store({
+        state: {
+          message: "zhang",
+          age: 20
+        },
+        getters: {
+          change(state) {
+            console.log(state);
+            return state.message + "888";
+          }
+        },
+        mutations: {
+          changemsg(state, payload) {
+            state.message = payload;
+            return state;
+          }
+        },
+        actions: {
+          changmsgSync({ commit }, payload) {
+            commit("changemsg", payload);
+          }
+        },
+        modules: {
+          a: {
+            //a模块
+            namespaced: true,
+            state: {
+              a_msg: "a模块中的state值"
+            },
+            mutations: {
+              changestate(state, payload) {
+                state.a_msg = state.a_msg + payload;
+                return state;
+              }
+            },
+            actions: {
+              changestatesync({ commit }, payload) {
+                setTimeout(() => {
+                  commit("changestate", payload);
+                }, 2000);
+              }
+            }
+          },
+          b: {
+            //b模块
+            namespaced: true,
+            state: {
+              a_msg: "b模块中的state值"
+            },
+            mutations: {
+              changestate(state, payload) {
+                state.a_msg = state.a_msg + payload;
+                return state;
+              }
+            },
+            actions: {
+              changestatesync({ commit }, payload) {
+                setTimeout(() => {
+                  commit("changestate", payload);
+                }, 2000);
+              }
+            }
+          }
+        }
+      });
+      let { mapState, mapMutations, mapActions, mapGetters } = Vuex;
+      //辅助函数:mapState  mapMutations  mapActions  mapGetters
+      let VM = new Vue({
+        store,
+        data: {
+          msg: "success"
+        },
+        computed: {
+          ...mapState(["message", "age"]),
+          ...mapGetters(["change"])
+        },
+        created() {
+          console.log(this.$store.state.message);
+        },
+        mounted() {
+          console.log(this.$store.getters.change);
+          this.changestatesync("这是mounted中执行的方式");
+        },
+        methods: {
+          //   changemsg() {
+          //     this.$store.commit("changemsg", "改变过后");
+          //   }
+          //   changmsgSync() {
+          //     this.$store.dispatch("changmsgSync", "信息");
+          //   },
+          ...mapMutations(["changemsg"]),
+          ...mapActions(["changmsgSync"]),
+          // changestate() {
+          //   this.$store.commit("a/changestate", "改变");
+          // }
+          // changestatesync() {
+          //   this.$store.dispatch("a/changestatesync", "异步改变");
+          // }
+          ...mapMutations("b", ["changestate"]),
+          ...mapMutations("a", ["changestate"]),
+          ...mapActions("a", ["changestatesync"])
+        }
+      });
+      VM.$mount("#app");
+    </script>
+  </body>
+</html>

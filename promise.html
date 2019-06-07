@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>promise</title>
+  </head>
+  <body>
+    <script>
+      // 模拟promise方法一:
+      // function _Promise() {
+      //   let that = this;
+      //   this.status = "pending";
+      //   this.msg = "none";
+      //   let process = arguments[0];
+
+      //   process(
+      //     function() {
+      //       that.status = "fulfilled";
+      //       that.msg = arguments[0];
+      //     },
+      //     function() {
+      //       that.status = "rejected";
+      //       that.msg = arguments[0];
+      //     }
+      //   );
+      // }
+
+      // _Promise.prototype.then = function() {
+      //   if (this.status === "fulfilled" && arguments[0]) {
+      //     arguments[0](this.msg);
+      //   } else if (this.status === "rejected" && arguments[1]) {
+      //     arguments[1](this.msg);
+      //   }
+      // };
+
+      // new _Promise((resolve, reject) => {
+      //   resolve("成功");
+      // }).then(
+      //   data => {
+      //     console.log(data);
+      //   },
+      //   err => {
+      //     console.log(err);
+      //   }
+      // );
+
+      //模拟promise方法二
+
+      function _Promise() {
+        this.state = "pending";
+        this.process = arguments[0];
+      }
+
+      _Promise.prototype = {
+        then() {
+          this.process(
+            data => {
+              this.state = "fulfilled";
+              arguments[0](data);
+            },
+            err => {
+              this.state = "rejected";
+              arguments[1](err);
+            }
+          );
+        }
+      };
+
+      new _Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve("success");
+        }, 1000);
+        setTimeout(() => {
+          reject("err");
+        }, 2000);
+      }).then(
+        data => {
+          console.log(data);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    </script>
+  </body>
+</html>
